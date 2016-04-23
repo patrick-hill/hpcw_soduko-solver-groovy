@@ -1,32 +1,12 @@
 package com.hpcw.model
 
-import javax.swing.AbstractAction
-import javax.swing.Action
+import groovy.beans.Bindable
 import javax.swing.BorderFactory
-import javax.swing.JButton
-import javax.swing.JFormattedTextField
-import javax.swing.JLabel
-import javax.swing.JMenuItem
 import javax.swing.JPanel
-import javax.swing.JPopupMenu
 import javax.swing.JTextField
-import javax.swing.KeyStroke
-import java.awt.BorderLayout
-import java.awt.Dimension
 import java.awt.Font
-import java.awt.FontMetrics
-import java.awt.Graphics
-import java.awt.Graphics2D
 import java.awt.GridLayout
 import java.awt.Color
-import java.awt.Image
-import java.awt.RenderingHints
-import java.awt.TextField
-import java.awt.event.ActionEvent
-import java.awt.event.FocusEvent
-import java.awt.event.FocusListener
-import java.awt.event.KeyEvent
-import java.awt.image.BufferedImage
 
 /**
  * Created by phill on 4/21/16.
@@ -34,6 +14,7 @@ import java.awt.image.BufferedImage
 class BoardPanel extends JPanel {
 
     public CustomTextField[][] fields = new CustomTextField[9][9]
+    @Bindable String[][] data = new String[9][9]
 
     public BoardPanel() {
         super()
@@ -48,10 +29,12 @@ class BoardPanel extends JPanel {
             panels[x] = p
             // Add 9 text fields to each 3x3 Cell
             9.times { y ->
-                CustomTextField t = new CustomTextField()
-                t.setHorizontalAlignment(JTextField.CENTER)
-                t.setFont(new Font("SansSerif", Font.BOLD, 22))
-                fields[x][y] = t
+//                textField id: 'textField', text: bind('text', source: textModel, mutual: true)
+                CustomTextField textField = new CustomTextField()
+                textField.setHorizontalAlignment(JTextField.CENTER)
+                textField.setFont(new Font("SansSerif", Font.BOLD, 22))
+                fields[x][y] = textField
+//                textField text: bind('text', source: {data[x][y]}, mutual: true)
             }
             this.add(p)
         }
@@ -97,9 +80,10 @@ class BoardPanel extends JPanel {
             super()
         }
 
-        void text(String str) {
+        @Override
+        void setText(String str) {
             if(str.isInteger() && str.toInteger() > 0 && str.toInteger() < 10) {
-                this.text = str
+                super.setText(str)
             }
         }
     }

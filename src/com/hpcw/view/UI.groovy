@@ -1,35 +1,32 @@
 package com.hpcw.view
 
-import com.hpcw.controllers.FileParser
-import com.hpcw.controllers.Startup
+import com.hpcw.util.FileParser
+import com.hpcw.controllers.SodukoSolver
 import com.hpcw.model.BoardData
 import com.hpcw.model.BoardPanel
 import groovy.swing.SwingBuilder
-import javafx.scene.paint.Color
 
 import javax.swing.BorderFactory
 import javax.swing.JFileChooser
-import javax.swing.JFormattedTextField
-import javax.swing.JTextField
-import java.awt.event.ActionEvent
-
 
 /**
  * Created by phill on 4/21/16.
  */
 class UI {
 
+    def solver
     def title = 'HPCW Soduko Solver'
     def swing = new SwingBuilder()
     def boardPanel
-    def boardData = new BoardData()
     def frame
 
     def fields
     def puzzleName
     def output
 
-    public UI() {}
+    public UI(SodukoSolver solver) {
+        this.solver = solver
+    }
 
     void run() {
         frame = swing.frame(
@@ -40,7 +37,7 @@ class UI {
             menuBar {
                 menu(text:'File') {
                     menuItem() { action(name:'New', closure:{ println("Clicked 'New'") }) }
-                    menuItem() { action(name:'Open', closure:{ loadFile() }) }
+                    menuItem() { action(name:'Open', closure:{ solver.loadFile(openFileDialog()) }) }
                     menuItem() { action(name:'Save', enabled:true, closure:{ println("Clicked 'Save'") }) }
                     separator()
                     menuItem() { action(name:'Close', enabled:true, closure:{ closeWindow() }) }
@@ -90,34 +87,10 @@ class UI {
         frame.dispose()
     }
 
-    void loadFile() {
-        File file = openFileDialog()
-        println "loadFile file is: ${file.path}"
-        def data = new FileParser(file).parseFile()
-        boardData.setData(data)
-        updateFields()
-    }
-
-    void updateFields() {
-        // get fields
-        fields = boardPanel.fields
-        9.times { x ->
-            9.times { y ->
-                fields[x][y].text = boardData.data[x][y]
-                if(boardData.data[x][y] != 0) {
-                    fields[x][y].setBackground(Color.ALICEBLUE)
-                }
-            }
-        }
-
-    }
-
     def openFileDialog() {
         def fileDialog = new JFileChooser(dialogTitle: "Choose File", fileSelectionMode: JFileChooser.FILES_ONLY, currentDirectory: new File(System.getProperty("user.dir")))
         fileDialog.showOpenDialog()
-        def file = fileDialog.selectedFile
-        println "Files is $file"
-        file
+        fileDialog.selectedFile
     }
 
     void showAbout() {
