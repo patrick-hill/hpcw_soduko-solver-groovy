@@ -1,5 +1,6 @@
 package com.hpcw.model
 
+import com.hpcw.util.Utils
 import groovy.beans.Bindable
 import javax.swing.BorderFactory
 import javax.swing.JPanel
@@ -39,37 +40,9 @@ class BoardPanel extends JPanel {
             this.add(p)
         }
         // 9 cells do 3 times 3 times
-        def panel
         9.times { row ->
             9.times { col ->
-                // Panel 0
-                if (row < 3 && col < 3)
-                    panel = 0
-                // Panel 1
-                if (row < 3 && col in (3..5))
-                    panel = 1
-                // Panel 2
-                if (row < 3 && col > 5)
-                    panel = 2
-
-                // Panel 3: rows 3..5
-                if (row in (3..5) && col < 3)
-                    panel = 3
-                if (row in (3..5) && col in (3..5))
-                    panel = 4
-                if (row in (3..5) && col > 5)
-                    panel = 5
-
-                // Panel 7: rows > 5
-                if (row > 5 && col < 3)
-                    panel = 6
-                if (row > 5 && col in (3..5))
-                    panel = 7
-                if (row > 5 && col > 5)
-                    panel = 8
-
-                panels[panel].add(fields[row][col])
-//                println "Panel $panel gets field ${fields[row][col].text}"
+                panels[Utils.getCell(row,col)].add(fields[row][col])
             }
         }
     }

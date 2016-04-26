@@ -32,7 +32,9 @@ class FileParser {
         def i = 0
         file.eachLine { String line ->
             line = line.trim()
-            data[i] = (String[]) line.toCharArray()
+            line.eachWithIndex { val, j ->
+                data[i][j] = val
+            }
             println "Data $i is: ${data[i]}"
             i++
         }

@@ -1,13 +1,15 @@
 package com.hpcw.view
 
-import com.hpcw.util.FileParser
 import com.hpcw.controllers.SodukoSolver
-import com.hpcw.model.BoardData
 import com.hpcw.model.BoardPanel
+import groovy.beans.Bindable
 import groovy.swing.SwingBuilder
-
 import javax.swing.BorderFactory
 import javax.swing.JFileChooser
+import javax.swing.JPanel
+import javax.swing.JTextField
+import java.awt.Color
+import java.awt.Font
 
 /**
  * Created by phill on 4/21/16.
@@ -18,18 +20,17 @@ class UI {
     def title = 'HPCW Soduko Solver'
     def swing = new SwingBuilder()
     def boardPanel
-    def frame
-
     def fields
+
     def puzzleName
-    def output
+    def output = ""
 
     public UI(SodukoSolver solver) {
         this.solver = solver
     }
 
     void run() {
-        frame = swing.frame(
+        def frame = swing.frame(
                 title:title,
                 location:[300,300],
                 size:[600,400],
@@ -65,7 +66,8 @@ class UI {
                             label(text:'Solve Method', constraints:WEST, toolTipText:'Choose a solving method')
                             comboBox(enabled: false, items:['Heuristic', 'Brute-force'], constraints:CENTER, toolTipText:'Choose solving method')
                         }
-                        button(text:'Solve', actionPerformed:{ event -> println("closure fired with event: " + event) })
+//                        button(text:'Solve', actionPerformed:{ event -> println("closure fired with event: " + event) })
+                        button(text:'Solve', actionPerformed:{ solver.solve() })
                         panel {
                             borderLayout()
                             label(text:'Output', constraints:WEST)
@@ -77,6 +79,7 @@ class UI {
                 }
                 scrollPane {
                     panel(boardPanel = new BoardPanel())
+                    fields = boardPanel.fields
                 }
             }
         }
