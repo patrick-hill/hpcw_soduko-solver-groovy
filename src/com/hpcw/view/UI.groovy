@@ -96,13 +96,13 @@ class UI {
         fileDialog.selectedFile
     }
 
+    void showCompleteDialog() {
+        def pane = swing.optionPane(message:'Puzzle Solved!')
+        def dialog = pane.createDialog(frame, "Solved")
+        dialog.show()
+    }
+
     void showAbout() {
-        // this version doesn't auto-size & position the dialog
-        /*
-        def dialog = swing.dialog(owner:frame, title:'About GroovySwing') {
-            optionPane(message:'Welcome to the wonderful world of GroovySwing')
-        }
-        */
         def pane = swing.optionPane(message:'Coming Soon ;)')
         def dialog = pane.createDialog(frame, "About $title")
         dialog.show()

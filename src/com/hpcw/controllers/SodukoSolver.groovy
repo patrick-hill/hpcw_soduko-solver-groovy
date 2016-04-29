@@ -40,6 +40,7 @@ class SodukoSolver {
     void solve() {
         checkBlocks()
 //        crossCheck()
+        boardData.updateBlocksPossibles()
     }
 
     void checkBlocks() {
@@ -48,17 +49,42 @@ class SodukoSolver {
             9.times { y ->
                 def block = boardData.blocks[x][y]
                 if(block.isEmpty) {
-                    if (block.possibles.size == 1) {
-                        block.val = block.possibles[0]
-                        block.field.setBackground(Color.CYAN)
-                        changed = true
-                        boardData.updateBlocksPossibles()
-                    }
+                    changed = checkBlockIsSolved(block)
+                    changed = checkBlockCellValues(block, x, y)
                 }
             }
         }
-        if(changed)
+        if(changed) {
             checkBlocks()
+        }
+//        if( boardData.isSolved() ) {
+//            ui.showCompleteDialog()
+//        }
+    }
+
+    def checkBlockIsSolved(def block) {
+        def changed = false
+        if (block.possibles.size == 1) {
+            boardData.setBlockVal(block, block.possibles[0])
+            changed = true
+            boardData.updateBlocksPossibles()
+        }
+        changed
+    }
+
+    def checkBlockCellValues(block, row, col) {
+        def changed = false
+        def cell = Utils.getCell(row, col)
+        def cellBlocks = boardData.getBlocksByCell(cell)
+        cellBlocks.remove(block)
+        block.possibles.each { blockVal ->
+            // Do any of the cells blocks also have this value? if not, it's solved
+            if( (cellBlocks.findAll { it.possibles.contains(blockVal) }).size() == 0 ) {
+                boardData.setBlockVal(block, blockVal)
+                changed = true
+            }
+        }
+        changed
     }
 
     void crossCheck() {

@@ -25,12 +25,18 @@ class BoardData {
             9.times { y->
                 blocks[x][y] = new BoardBlock(x,y,fileData[x][y], fields[x][y])
             }
-            // Create helpers
+        }
+
+        updateHelpers()
+        updateBlocksPossibles()
+    }
+
+    void updateHelpers() {
+        9.times { x ->
             rows[x] = new ArrayList<Integer>(allVals)
             cols[x] = new ArrayList<Integer>(allVals)
             cells[x] = new ArrayList<Integer>(allVals)
         }
-        // Update helpers
         9.times { x ->
             9.times { y ->
                 def block = blocks[x][y]
@@ -45,15 +51,20 @@ class BoardData {
         println "Rows: $rows"
         println "Cols: $cols"
         println "Cells: $cells"
+    }
 
+    void setBlockVal(def block, def val) {
+        block.val = val
+        block.field.setBackground(Color.CYAN)
         updateBlocksPossibles()
     }
 
     def updateBlocksPossibles() {
         9.times { x ->
             9.times { y ->
-                blocks[x][y].possibles.removeAll(getBlocksNotPossible(x,y))
-                println "Possibles for: $x,$y are: ${blocks[x][y].possibles}"
+                def block = blocks[x][y]
+                block.possibles.removeAll(getBlocksNotPossible(x,y))
+                println "Possibles for: [$x,$y] Val: ${block.val} are: ${block.possibles}"
             }
         }
     }
@@ -81,6 +92,7 @@ class BoardData {
                     list << block
             }
         }
+        list
     }
 
     def getBlocksByCol(def col, def all=false) {
@@ -94,6 +106,7 @@ class BoardData {
                     list << block
             }
         }
+        list
     }
 
     def getBlocksByCell(def cell, def all=false) {
@@ -111,8 +124,20 @@ class BoardData {
                 }
             }
         }
+        list
     }
 
+    def isSolved() {
+        def isSolved = true
+        9.times { x ->
+            9.times { y ->
+                if( isSolved && blocks[x][y].isEmpty) {
+                    isSovled = false
+                }
+            }
+        }
+        isSolved
+    }
 
 
 
@@ -127,7 +152,7 @@ class BoardData {
             this.val = val
             this.field = field
             if(isValidVal()) {
-                possibles.remove(val)
+                possibles = []
                 field.setBackground(Color.lightGray)
                 field.text = val
                 isEmpty = false
@@ -137,7 +162,7 @@ class BoardData {
         def setVal(def val) {
             this.val = val
             field.text = val
-            possibles.remove(val)
+            possibles = []
         }
 
         def isValidVal() {
